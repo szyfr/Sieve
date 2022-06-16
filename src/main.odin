@@ -5,7 +5,11 @@ package main
 import "core:fmt"
 import "core:strings"
 
+import "display"
+import "registers"
+
 import "raylib"
+
 
 
 
@@ -17,24 +21,33 @@ main :: proc() {
 	raylib.set_target_fps(60);
 
 
-	font: raylib.Font = raylib.load_font("data/kongtext.ttf");
+	disp := display.initialize_display();
+	dmg  := registers.initialize_DMG();
+
+
+	font: raylib.Font = raylib.load_font("data/kong.ttf");
 
 
 	for !raylib.window_should_close() {
 		// Updating
 		{
-
+			display.update_display(disp);
 		}
 
 		// Drawing
 		{
 			raylib.begin_drawing();
 				raylib.clear_background(raylib.Color{ 20, 20, 20, 255 });
-				raylib.draw_text("LD  A,[$5040]",20,20,20,raylib.GRAY);
+				
+				display.draw_display(disp, font);
+
 				raylib.draw_fps(0,0);
 			raylib.end_drawing();
 		}
 	}
 
+	display.free_display(disp);
+	registers.free_DMG(dmg);
+	raylib.unload_font(font);
 	raylib.close_window();
 }
