@@ -7,6 +7,7 @@ package registers
 //= Global Variables
 
 //= Constants
+registerDMG: ^GameboyRegisters;
 
 //= Enumerations
 
@@ -22,14 +23,12 @@ GameboyRegisters :: struct {
 
 //- Management
 // Initialization
-initialize_DMG :: proc() -> ^GameboyRegisters {
-	dmg: ^GameboyRegisters = new(GameboyRegisters);
-	dmg.stack = make([dynamic]u8);
-
-	return dmg;
+initialize_DMG :: proc() {
+	registerDMG: ^GameboyRegisters = new(GameboyRegisters);
+	registerDMG.stack = make([dynamic]u8);
 }
 // Free
-free_DMG :: proc(ptr: ^GameboyRegisters) {
-	delete(ptr.stack);
-	free(ptr);
+free_DMG :: proc() {
+	delete(registerDMG.stack);
+	free(registerDMG);
 }

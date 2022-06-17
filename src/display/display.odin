@@ -9,6 +9,7 @@ import "core:strings"
 import "../raylib"
 
 //= Global Variables
+display: ^Display;
 
 //= Constants
 
@@ -16,7 +17,9 @@ import "../raylib"
 
 //= Structures
 Display :: struct {
-	currentLine: u64,
+	currentPosition: u64,
+	cursorTexture: raylib.Texture,
+
 	verticalOffset: i64,
 
 	text: [dynamic]string,
@@ -26,28 +29,22 @@ Display :: struct {
 
 //- Management
 // Initialization
-initialize_display :: proc() -> ^Display {
-	disp: ^Display = new(Display);
-	disp.text = make([dynamic]string);
+initialize_display :: proc() {
+	display      = new(Display);
+	display.text = make([dynamic]string);
 
 	// TODO: TEST
-	append(&disp.text, "This_is_a_test:", "    ld  a,b", "    ret", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-
-	return disp;
+	append(&display.text, "This_is_a_test:", "    ld  a,b", "    ret", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 }
 // Free
-free_display :: proc(ptr: ^Display) {
-	delete(ptr.text);
-	free(ptr);
+free_display :: proc() {
+	delete(display.text);
+	free(display);
 }
 
 //- Updating / Drawing
 // Update
-update_display :: proc(disp: ^Display) {
-	
-	if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_V) && raylib.is_key_down(raylib.Keyboard_Key.KEY_LEFT_CONTROL) {
-		
-	}
+update_display :: proc() {
 	
 	if raylib.is_key_down(raylib.Keyboard_Key.KEY_LEFT_CONTROL) || raylib.is_key_down(raylib.Keyboard_Key.KEY_RIGHT_CONTROL) {
 		// CTRL + V
@@ -56,41 +53,43 @@ update_display :: proc(disp: ^Display) {
 			str:  string   = strings.clone_from_cstring_bounded(cstr, len(cstr));
 			stra: []string = strings.split_lines(str);
 
-			delete(disp.text);
-			disp.text = make([dynamic]string);
+			delete(display.text);
+			display.text = make([dynamic]string);
 
 			for i:=0; i < len(stra); i+=1 {
-				append(&disp.text,stra[i]);
+				append(&display.text, stra[i]);
 			}
 		}
+
 		// CTRL + UP/DOWN
 		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_UP) {
-			disp.verticalOffset = 80;
+			display.verticalOffset = 80;
 		}
 		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_DOWN) {
-			disp.verticalOffset = (i64(-len(disp.text) * 20) + 620)
+			display.verticalOffset = (i64(-len(display.text) * 20) + 620)
 		}
 	} else {
+		// UP/DOWN
 		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_UP) {
-			if disp.verticalOffset < 80 do disp.verticalOffset += 20;
+			if display.verticalOffset < 80 do display.verticalOffset += 20;
 		}
 		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_DOWN) {
 			// TODO: lock this
-			disp.verticalOffset -= 20;
+			display.verticalOffset -= 20;
 		}
 	}
 }
 // Draw
-draw_display :: proc(disp: ^Display, font: raylib.Font) {
-	for i:=0; i < len(disp.text); i+=1 {
+draw_display :: proc(font: raylib.Font) {
+	for i:=0; i < len(display.text); i+=1 {
 		builder: strings.Builder;
 		str:     string = fmt.sbprintf(&builder, "%i", i + 1);
 
 		line: cstring = strings.clone_to_cstring(str);
-		text: cstring = strings.clone_to_cstring(disp.text[i]);
+		text: cstring = strings.clone_to_cstring(display.text[i]);
 		
-		raylib.draw_text_ex(font, line, raylib.Vector2{25, f32(i * 20) + 20 + f32(disp.verticalOffset)}, 16, 0, raylib.RAYWHITE);
-		raylib.draw_text_ex(font, text, raylib.Vector2{75, f32(i * 20) + 20 + f32(disp.verticalOffset)}, 16, 0, raylib.RAYWHITE);
+		raylib.draw_text_ex(font, line, raylib.Vector2{ 25, f32(i * 20) + 20 + f32(display.verticalOffset)}, 16, 0, raylib.RAYWHITE);
+		raylib.draw_text_ex(font, text, raylib.Vector2{100, f32(i * 20) + 20 + f32(display.verticalOffset)}, 16, 0, raylib.RAYWHITE);
 	}
 }
 
