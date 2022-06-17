@@ -12,7 +12,6 @@ import "raylib"
 
 
 
-
 //= Main
 main :: proc() {
 
@@ -32,6 +31,7 @@ main :: proc() {
 		// Updating
 		{
 			display.update_display();
+			registers.update_dmg();
 		}
 
 		// Drawing
@@ -40,6 +40,7 @@ main :: proc() {
 				raylib.clear_background(raylib.Color{ 20, 20, 20, 255 });
 				
 				display.draw_display(font);
+				registers.draw_dmg(font);
 
 				raylib.draw_fps(0,0);
 			raylib.end_drawing();

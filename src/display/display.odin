@@ -50,6 +50,8 @@ free_display :: proc() {
 //- Updating / Drawing
 // Update
 update_display :: proc() {
+	keyUp:   bool = raylib.is_key_pressed(raylib.Keyboard_Key.KEY_UP)   || raylib.is_key_pressed(raylib.Keyboard_Key.KEY_W);
+	keyDown: bool = raylib.is_key_pressed(raylib.Keyboard_Key.KEY_DOWN) || raylib.is_key_pressed(raylib.Keyboard_Key.KEY_S);
 	
 	if raylib.is_key_down(raylib.Keyboard_Key.KEY_LEFT_CONTROL) || raylib.is_key_down(raylib.Keyboard_Key.KEY_RIGHT_CONTROL) {
 		// CTRL + V
@@ -67,18 +69,18 @@ update_display :: proc() {
 		}
 
 		// CTRL + UP/DOWN
-		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_UP) {
+		if keyUp {
 			display.verticalOffset = 80;
 		}
-		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_DOWN) {
+		if keyDown {
 			display.verticalOffset = (i64(-len(display.text) * 20) + 620)
 		}
 	} else {
 		// UP/DOWN
-		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_UP) {
+		if keyUp {
 			if display.verticalOffset < 80 do display.verticalOffset += 20;
 		}
-		if raylib.is_key_pressed(raylib.Keyboard_Key.KEY_DOWN) {
+		if keyDown {
 			// TODO: lock this
 			display.verticalOffset -= 20;
 		}
