@@ -24,7 +24,7 @@ GameboyRegisters :: struct {
 //- Management
 // Initialization
 initialize_DMG :: proc() {
-	registerDMG: ^GameboyRegisters = new(GameboyRegisters);
+	registerDMG = new(GameboyRegisters);
 	registerDMG.stack = make([dynamic]u8);
 }
 // Free

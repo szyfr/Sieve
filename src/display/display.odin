@@ -33,12 +33,17 @@ initialize_display :: proc() {
 	display      = new(Display);
 	display.text = make([dynamic]string);
 
+	img: raylib.Image     = raylib.load_image("data/cursor.png");
+	display.cursorTexture = raylib.load_texture_from_image(img);
+	raylib.unload_image(img);
+
 	// TODO: TEST
 	append(&display.text, "This_is_a_test:", "    ld  a,b", "    ret", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
 }
 // Free
 free_display :: proc() {
 	delete(display.text);
+	raylib.unload_texture(display.cursorTexture);
 	free(display);
 }
 
@@ -88,9 +93,10 @@ draw_display :: proc(font: raylib.Font) {
 		line: cstring = strings.clone_to_cstring(str);
 		text: cstring = strings.clone_to_cstring(display.text[i]);
 		
-		raylib.draw_text_ex(font, line, raylib.Vector2{ 25, f32(i * 20) + 20 + f32(display.verticalOffset)}, 16, 0, raylib.RAYWHITE);
-		raylib.draw_text_ex(font, text, raylib.Vector2{100, f32(i * 20) + 20 + f32(display.verticalOffset)}, 16, 0, raylib.RAYWHITE);
+		raylib.draw_text_ex(font, line, raylib.Vector2{ 50, f32(i * 20) + 20 + f32(display.verticalOffset)}, 16, 0, raylib.RAYWHITE);
+		raylib.draw_text_ex(font, text, raylib.Vector2{125, f32(i * 20) + 20 + f32(display.verticalOffset)}, 16, 0, raylib.RAYWHITE);
 	}
+	raylib.draw_texture(display.cursorTexture, 25, i32(display.currentPosition * 20) + 20 + i32(display.verticalOffset), raylib.WHITE)
 }
 
 //- Utilities
